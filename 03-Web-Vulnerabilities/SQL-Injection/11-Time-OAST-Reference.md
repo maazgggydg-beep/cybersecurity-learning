@@ -2,28 +2,28 @@
 
 ## 1. Time-Based Blind SQL Injection
 
-This method relies on forcing the database to wait before sending a response. If the website takes a long time to load after your "poke," you've confirmed it's vulnerable.
+Force database to wait before responding. Long load time = vulnerable.
 
-**How it works:** You use a command like `SLEEP()` or `WAITFOR DELAY`
+**How it works:** Use `SLEEP()` or `WAITFOR DELAY`
 
-**The Logic:** If the first letter of the admin's password is 'A', then wait 10 seconds. If not, respond immediately.
+**The Logic:** If first letter of admin's password is 'A', wait 10 seconds. If not, respond immediately.
 
 ### Example Payloads by Database
 
 - **MySQL:** `1' AND (SELECT 1 FROM (SELECT(SLEEP(10)))a)--`
-  - Translation: "Hey database, if you see this, take a 10-second nap before you answer me"
-  
+  - "Hey database, take 10-second nap before answering"
+
 - **PostgreSQL:** `1' AND pg_sleep(10)--`
 
-- **Microsoft SQL Server (MSSQL):** `1'; WAITFOR DELAY '0:0:10'--`
+- **Microsoft SQL Server:** `1'; WAITFOR DELAY '0:0:10'--`
 
-**Why it's useful:** You use this when the application doesn't show any error messages or change its content, no matter what you type.
+**Why useful:** When app doesn't show errors or change content no matter what you type.
 
 ---
 
 ## 2. Out-of-Band (OAST) SQL Injection
 
-OAST stands for **Out-of-Band Application Security Testing**. This is like tricking the database into calling your phone instead of answering you.
+OAST = Out-of-Band Application Security Testing. Like tricking database into calling your phone instead of answering.
 
 ### Key Differences
 
@@ -60,4 +60,4 @@ Can you see error messages?
 
 ---
 
-*Use this guide to choose the right technique for your testing scenario.*
+*Use this guide to choose the right technique for your scenario.*

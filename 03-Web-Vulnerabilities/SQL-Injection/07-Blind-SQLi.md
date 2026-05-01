@@ -6,7 +6,7 @@ Blind SQL injection happens when an application is vulnerable to SQL injection b
 
 - Inputs affect the page behavior, but you never see SQL errors or output
 - The same request sometimes returns different content, status codes, redirects, or response times
-- Parameters in URLs, form fields, cookies, or headers seem to influence logic (login, search filters, sorting, etc.)
+- Parameters in URLs, form fields, cookies, or headers seem to influence logic
 
 ## Two Main Types
 
@@ -15,14 +15,7 @@ Blind SQL injection happens when an application is vulnerable to SQL injection b
 You change the query so the page response is different depending on whether a condition is **true** or **false**.
 
 - **True condition** → page looks normal
-- **False condition** → page changes (missing content, different message, empty results, different HTTP code)
-
-Common signals to compare:
-
-- Length of response body
-- Presence or absence of a keyword
-- HTTP status code
-- Redirect location
+- **False condition** → page changes (missing content, different message, empty results)
 
 ### 2) Time-based
 
@@ -31,24 +24,18 @@ You inject a condition that causes the database to **delay** the response only w
 - If response is slow → condition was true
 - If response is normal → condition was false
 
-Time-based is useful when there is no visible content difference.
-
 ## High-Level Exploitation Idea
 
-You can extract data one bit or one character at a time:
+You can extract data one character at a time:
 
-1. Confirm the injection point.
-2. Find a reliable true vs false signal (content change or timing)
-3. Enumerate:
-   - Database name
-   - Table names
-   - Column names
-   - Sensitive values (usernames, password hashes, API keys)
-4. Use binary search on character codes to reduce requests
+1. Confirm the injection point
+2. Find a reliable true vs false signal
+3. Enumerate data (database name, tables, columns, values)
+4. Use binary search to reduce requests
 
 ## Common Pitfalls
 
-- **Unstable timing**: network jitter can cause false positives in time-based tests.
-- **Caching/WAF/CDN**: may alter responses or block repeated patterns
-- **Different code paths**: the false case might trigger a different backend logic unrelated to SQL
-- **Rate limiting**: extraction is request-heavy
+- **Unstable timing** - Network jitter causes false positives
+- **Caching/WAF** - May alter responses or block patterns
+- **Different code paths** - False case might trigger different logic
+- **Rate limiting** - Extraction is request-heavy

