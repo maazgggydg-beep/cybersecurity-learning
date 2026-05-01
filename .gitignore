@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Notes backup
+*.bak
+*.backup
+
+# Environment variables
+.env
+.env.local
+
+# Dependencies
+venv/
+env/
+node_modules/

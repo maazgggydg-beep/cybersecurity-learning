@@ -1,0 +1,140 @@
+# 💾 Stealing Data via SQL UNION Attack
+
+## What a UNION-based SQL Injection is
+
+A **UNION-based SQL injection** happens when an application:
+
+- Builds an SQL query by concatenating untrusted input
+- Returns the query results in the web response
+- Can be tricked into appending a second `SELECT` statement using `UNION`
+
+If successful, the attacker can **merge data from other tables** into the original result set and have it displayed by the application.
+
+## When it Works (Requirements)
+
+A `UNION` injection typically requires:
+
+- The original query returns results that are shown in the response
+- The database user has permission to read the targeted objects
+- The injected `UNION SELECT` has:
+  - The **same number of columns** as the original query
+  - **Compatible data types** for each column position
+
+## Example Vulnerable Scenario
+
+Imagine an app endpoint like:
+- `https://example.com/products?category=Gifts`
+
+And the backend builds:
+```sql
+SELECT name, description
+FROM products
+WHERE category = 'Gifts'
+AND released = 1;
+```
+
+If `category` is directly concatenated, an input containing quotes and SQL can break out of the string.
+
+## Step 1: Confirm the Injection Point
+
+A common first check is to see whether changing the query logic changes the response.
+
+**Illustrative inputs** (exact syntax varies by database and app):
+
+- Input that should return normal results:
+  - `Gifts`
+- Input that attempts to force "true":
+  - `Gifts' OR '1'='1`
+- Input that attempts to force "false":
+  - `Gifts' AND '1'='2`
+
+If results differ in a way that suggests the SQL logic is being executed, the parameter may be injectable.
+
+## Step 2: Find the Number of Columns
+
+You need to match the number of columns in the original `SELECT`.
+
+### Method A: ORDER BY Probing
+
+You can incrementally test:
+
+- `Gifts' ORDER BY 1--`
+- `Gifts' ORDER BY 2--`
+- `Gifts' ORDER BY 3--`
+
+When the index exceeds the number of selected columns, many databases will throw an error.
+
+### Method B: UNION SELECT with NULLs
+
+Try different counts until the response stops erroring:
+
+- `Gifts' UNION SELECT NULL--`
+- `Gifts' UNION SELECT NULL, NULL--`
+- `Gifts' UNION SELECT NULL, NULL, NULL--`
+
+`NULL` is used because it can often be implicitly converted to many types.
+
+## Step 3: Identify Which Columns are Reflected
+
+Even if you can UNION, only some columns may be rendered on the page.
+
+If you discovered 2 columns, you can test which is visible:
+
+- `Gifts' UNION SELECT 'AAA', NULL--`
+- `Gifts' UNION SELECT NULL, 'BBB'--`
+
+If the page shows `AAA` then column 1 is reflected. If it shows `BBB` then column 2 is reflected.
+
+## Step 4: Handle Data Type Mismatches
+
+Sometimes a column position expects a numeric type or date type.
+
+Typical approaches:
+
+- Keep using `NULL` in non-reflected columns.
+- Use database casting functions when needed
+- Use a value that matches expected type (for example, `0` for numeric columns).
+
+## Step 5: Retrieve Interesting Database Information
+
+Once you have a working `UNION SELECT` and a reflected column, you can query **metadata** to learn what to target.
+
+Common interesting data categories:
+
+- **Database version and current user**
+- **List of tables** in the current database/schema.
+- **List of columns** for a chosen table.
+- **Sensitive application tables** (users, sessions, API keys, orders, billing).
+
+Where this metadata lives depends on the database:
+
+- Many systems expose standard catalog views like `INFORMATION_SCHEMA`
+- Others use vendor-specific catalogs
+
+## Mini Worked Example
+
+Assume:
+
+- The original query returns **2 columns**.
+- The page shows **column 2**.
+
+A conceptual pattern could be:
+
+```sql
+' UNION SELECT NULL, <interesting_value>--
+```
+
+Where `<interesting_value>` is something you are checking for, such as:
+
+- A database identity string
+- A table name from the metadata
+- A column name for a target table
+- A value from a specific row in a sensitive table
+
+## Common Pitfalls
+
+- **Comment syntax** differs by DB and context.
+- Some apps use **prepared statements** (then this specific UNION injection may fail).
+- **WAFs** and input filters can block obvious payloads.
+- Output may be **HTML-encoded** or truncated.
+- The query may use `SELECT *` plus joins, making column count and types tricky.
