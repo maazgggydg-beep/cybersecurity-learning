@@ -1,4 +1,6 @@
 # 🐧 Linux Basics
+## NEW NOTES
+new notes are comming soon.
 
 ## Overview
 Core Linux concepts essential for cybersecurity professionals.
