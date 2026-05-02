@@ -1,5 +1,10 @@
 # 🌐 Networking Fundamentals
 
+# Coming Soon
+
+Currently focusing on web vulnerabilities (XSS).
+Networking notes will be added later.
+
 ## Overview
 Core networking concepts for cybersecurity professionals.
 
