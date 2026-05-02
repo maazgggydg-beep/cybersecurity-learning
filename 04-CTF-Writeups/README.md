@@ -1,5 +1,10 @@
 # 🎯 CTF Writeups
 
+# Coming Soon
+
+Currently focusing on web vulnerabilities (XSS).
+CTF writeup now going to come time by time every satursday.
+
 Documentation of solutions from various CTF challenges including TryHackMe rooms, HackTheBox machines, and other competitions.
 
 ## Writeup Structure
