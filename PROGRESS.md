@@ -1,5 +1,6 @@
 # 📊 Learning Progress Tracker
 
+
 ## 🎓 Completed Topics
 
 ### SQL Injection (✅ Advanced Level)
