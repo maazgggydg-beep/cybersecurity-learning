@@ -1,0 +1,17 @@
+**The Vulnerability**
+
+I exploited a select box where you usually choose options (like London). We found that the website takes anything from the URL—specifically the `storeId`—and puts it directly into the website code without checking it first.
+
+**The Exploit**
+
+**Breakout from select:** First, we close the select tag using `"></select>`. This tells the browser the drop-down menu is finished now.
+
+**inject the payload:** Now that we are outside the select tag we add this payload: `<img src=x onerror=alert(1)>`.
+
+**The Trigger:**
+
+The logic is that src-x is an error (since the image doesn't exist). Because it's an error, the
+
+onerror attribute is triggered, it calls the alert() function, and our lab is solved.
+
+**Final Payload used:**`"></select><img src=1 onerror=alert(1)>`
