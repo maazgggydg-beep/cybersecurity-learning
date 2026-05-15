@@ -1,0 +1,25 @@
+in simple that what given in this lab 
+
+## given:
+
+This lab features a DOM-based cross-site scripting vulnerability where user input from the URL (location.search) is written directly to the page using document.write without sanitization. The vulnerability allows an attacker to  manipulate the URL to inject malicious HTML or script tags, causing the browser to execute them and to slove that lab we have to call alert function 
+
+## soulation:
+
+its simple word the page takes a search term from the URL and uses `document.write` to put it inside an `<img>` tag. Because it doesn't clean (sanitize) the input, we can inject our own HTML.
+
+ By searching for
+
+```
+"><svg onload=alert(1)>
+```
+
+, we manipulate the final HTML:
+
+1. `"` closes the `src` attribute.
+2. `>` closes the `<img>` tag.
+3. `<svg onload=alert(1)>` starts a new element that runs JavaScript immediately.
+
+**The Final Result in HTML:**`<img src="/.../tracker.gif?searchTerms="><svg onload=alert(1)>">`
+
+this cause the the alert to pop up
