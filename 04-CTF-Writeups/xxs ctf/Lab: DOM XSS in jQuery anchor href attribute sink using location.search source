@@ -1,0 +1,17 @@
+I started by exploring the application's **Feedback** section we already know vulnerable. Upon loading the feedback page I noticed a `returnPath` parameter in the URL ( set to `returnPath=/`)
+
+Using the  debugger I found the script responsible for handling this parameter:
+
+```jsx
+$(function() {$('#backLink').attr("href", (new URLSearchParams(window.location.search)).get('returnPath'));});
+```
+
+**Technical Breakdown:**The script waits for the page to load, finds an element with the ID `backLink` (the "Back" button), and reads the value of `returnPath` from the URL. It then directly injects this value into the `href` attribute of that link using jQuery’s `.attr()` method.
+
+**Exploitation Logic:**The main issue here is a **sink** (the `href` attribute) receiving unsanitized input from a **source** (the URL parameter). Since `href` attributes can execute code via the `javascript:` protocol I can bypass the intended navigation and execute a script instead.
+
+I add javascript:alert(1) to the returnPath parameter in the URL. After the page loaded, clicking the "Back" link triggered the alert, confirming the **DOM-based XSS but lab require  that we asses user cokie section so we update our payload so sinal payloads is:**
+
+**Final Payload**: I modified the URL to:`?returnPath=javascript:alert(document.cookie)`
+
+this payloads going to steal user cookie and to note  cookie store in `document.cookie`
