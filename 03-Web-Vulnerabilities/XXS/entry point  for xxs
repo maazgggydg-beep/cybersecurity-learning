@@ -1,0 +1,16 @@
+- **URL Query Parameters**: Information sent in the URL (like `?search=term`) that is often used in search bars, filters, and page navigation.
+- **POST Request Body**: Information sent in forms, like login information, registration information, or feedback.
+- **URL File Path**: Some apps use parts of the URL path itself as dynamic data (like `/user/profile/username`).- **HTTP Request Headers**: Values that could be logged or shown, like:
+- "User-Agent."
+- "Referer."
+- Values for "Cookie.
+
+**2.Stored Entry Points (Persistent XSS)**
+
+These have to do with data that is stored on the server and then shown to other users.
+
+- **User Profiles**: Sections like "Bio," "About Me," or "First/Last Name."
+- **Message Forums & Comments**: Comments on blogs, posts on forums, or messages in chat rooms.
+- **Support Tickets**: Comments or descriptions sent to administrative panels.
+- **Product Reviews**: What customers say about products on e-commerce sites.
+- **Admin Logs**: Site administrators save information like IP addresses or User-Agents and then look at it later in dashboards.
