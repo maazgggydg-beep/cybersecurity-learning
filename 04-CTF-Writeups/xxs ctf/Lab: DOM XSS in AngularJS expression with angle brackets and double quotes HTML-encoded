@@ -1,0 +1,49 @@
+> this lab is quite simple when you understand everything i use gemini and even youtube to understand **AngularJS and i use AI to enhanced my notes not all notes are AI enhaced but some are**
+> 
+
+**What is AngularJS**
+
+Think of AngularJS as a tool developers use to make websites "smart." In a 
+normal website, text is just text. But in an Angular website, the site 
+is constantly looking for specific patterns to turn into actions.
+
+**The "On" Switch (`ng-app`)**For Angular to start working, the programmer puts a label called `ng-app`
+ in the website's code. This tells Angular: "Hey, look at everything 
+inside this box and see if there are any instructions for you."
+
+**The Magic Braces `{{ }}`**The most common instruction is the double curly braces, often called "Mustaches."
+
+- If a regular site sees `{{ 1 + 1 }}`, it just displays those characters.
+- If an Angular site sees `{{ 1 + 1 }}`, it thinks, "Oh! I need to calculate this," and it shows the number `2` instead.
+
+**The Security Gap**Security filters usually look for "scary" symbols like `<script>` tags to stop hackers. But because Angular uses `{{ }}` instead of `< >`,
+ the security filters often ignore it. They think it’s just harmless 
+text, while Angular sees it as a command to run code. This is called **Template Injection**.
+
+When you used {{constructor.constructor('alert("XSS")')()}} you weren't just typing random words. You were using a "backdoor" in  how JavaScript works. Let's break it down into plain English:
+
+**1. What is a "Constructor"?**In the world of coding, a **constructor** is like a "factory." Everything in JavaScript (numbers, text, buttons) has a hidden factory that created it.
+
+**2. The Chain Reaction**
+
+- **The first `constructor`**: This reaches out and grabs the "factory" for the data you’re using.
+- **The second `.constructor`**: This is the secret trick. If you ask a factory for *its* factory, you get the **Function Factory**.
+- **The Power of the Function Factory**: This specific factory has a special power—it can take any text you give it and turn it into live, running code.
+- 
+
+**3. The "Alert" Part**Inside the brackets `('alert("XSS")')`, you are handing a note to that Function Factory. You're saying: "Please take this text and make it a real command."
+
+**4. The Final `()`**In coding, putting two empty parentheses `()` at the end of something is like hitting the **"Enter"** key or the **"Start"** button. Without those last two brackets, the code is created but never actually runs. With them, the `alert` pops up on the screen.
+
+**Why this is "Sneaky":**
+
+To a regular security guard (a firewall), this looks like a bunch of harmless words about "constructors." It doesn't look like a virus or a script. But to the browser, it’s a perfectly valid way to build and run a command from scratch.
+
+## to slove lab these are step
+
+1. Enter a random alphanumeric string into the search box.
+2. View the page source and observe that your random string is enclosed in an `ng-app` directive.
+3. Enter the following AngularJS expression in the search box: `{{$on.constructor('alert(1)')()}}`
+4. Click **search**.
+
+and what happen is explaid above in diatel
