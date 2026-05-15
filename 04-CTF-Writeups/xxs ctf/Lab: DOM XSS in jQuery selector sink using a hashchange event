@@ -1,0 +1,108 @@
+# you have to know that all before sloving that lab
+
+## DOM XSS via jQuery Selector Sink
+
+1. The Vulnerable Code (The "Sink")
+
+This is what a developer writes when they want the page to auto-scroll to a section based on the URL:
+
+javascript
+
+> `$(window).on('hashchange', function() {
+    var element = $(location.hash); // 🚩 DANGER: Takes input from URL and gives it to jQuery
+    element[0].scrollIntoView();
+});`
+> 
+
+Use code with caution.
+
+2. Key Concepts (Definitions)
+
+- **`location.hash` (The Source):** The part of the URL starting with `#`. It is user-controllable and stays in the browser (never goes to the server).
+- **`hashchange` (The Trigger):** An event that "rings" whenever the text after the `#` in the URL is modified.
+- **`$()` (The Sink):** A jQuery function that can **select** an element (e.g., `#menu`) OR **create** one (e.g., `<img>`).
+- **`<iframe>` (The Delivery):** A window-within-a-window used to load the target site and "poke" it from the outside.
+- 
+
+3. The Exploit Payload
+
+The attacker hosts this on their own site:
+
+html
+
+`<iframe src="https://vulnerable-website.com#" 
+        onload="this.src += '<img src=x onerror=alert(1)>'">`
+
+Use code with caution.
+
+**How it works:**
+
+1. **Loads** the target site with a blank hash.
+2. **`onload`** waits for it to finish loading.
+3. **`this.src +=`** appends malicious HTML to the URL.
+4. **`hashchange`** fires inside the site; jQuery sees the HTML and executes the `onerror` script.
+5. 
+
+4. Why modern jQuery is safer
+
+Newer versions check if the input starts with a `#`. If it does, they refuse to build HTML and only look for an ID. However, if a developer strips the `#` manually before passing it to `$(...)`, the site is **vulnerable again**.
+
+5. How to Fix It (The Cure)
+
+Don't pass the hash directly to `$()`. Instead, use `document.getElementById`:
+
+javascript
+
+> `$(window).on('hashchange', function() {
+    // Only finds an element by ID, will NOT execute HTML
+    var element = document.getElementById(location.hash.substring(1)); 
+    if (element) element.scrollIntoView();
+});`
+> 
+
+---
+
+# CTF start
+
+## 1. The Goal
+
+Trigger the `print()` function in the victim's browser.
+
+## 2. The Vulnerability
+
+The home page contains a script that listens for a change in the URL hash (everything after the `#`).
+
+- **The Code:** `$(window).on('hashchange', function() { var element = $(location.hash); ... });`.
+- **The Flaw:** It takes whatever is in the hash and passes it directly into the jQuery selector function `$()`.
+- **The Sink:** In older or unpatched versions of jQuery, `$()` doesn't just find elements; if you pass it an HTML string (like `<img>`), it **creates** that element and executes any scripts inside it.
+
+3. The Challenge (The "Trick")
+
+The vulnerability is triggered by a **`hashchange` event**. If you just send someone a link like `://website.com<img...>`, the event might not fire because the hash is there from the very start—it hasn't "changed" yet. You need to:
+
+1. Load the page with one hash.
+2. Change it to the malicious hash *after* it loads.
+
+4. Step-by-Step Solution
+
+1. **Access the Lab:** Copy your lab's main URL (e.g., `https://[LAB-ID].web-security-academy.net/`).
+2. **Go to the Exploit Server:** This is where you'll host the "trap" for the victim.
+3. **Craft the Payload:** In the **Body** section, paste this code:
+
+```jsx
+<iframe src="[https://YOUR-LAB-ID.web-security-academy.net/#](https://your-lab-id.web-security-academy.net/#)" onload="this.src+='<img src=x onerror=print()>'"></iframe>
+
+```
+
+- **`frame src="...#"`**: Loads the site with an empty hash.
+- **`onload`**: Waits for the site to finish loading.
+- **`this.src +=`**: Appends the malicious `<img>` tag to the URL. This *changes* the hash, triggering the site's vulnerable `hashchange` listener.
+- **`onerror=print()`**: Since `src=x` is a fake image, it fails and runs `print()`.
+- **Store and Test:** Click **Store**, then **View exploit**. If your print dialog opens, it works!.
+1. **Finish:** Click **Deliver exploit to victim**.
+
+5. Summary Pattern for your Brain
+
+- **Source:** `location.hash` (controlled by attacker via URL).
+- **Trigger:** `hashchange` event (needs an iframe + onload to automate).
+- **Sink:** jQuery's `$()` function (executes HTML instead of just selecting).
