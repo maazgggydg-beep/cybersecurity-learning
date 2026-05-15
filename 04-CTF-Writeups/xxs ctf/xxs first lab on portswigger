@@ -1,0 +1,7 @@
+That very easy and simple lab lets slove it:
+
+We go to vulnerable application provided by portswigger application contain an search bar so we inject our payload in search bar this payload
+
+<script>alert(1)</script>
+
+this is simple payload that just call alert function that our goal of lab and it sloved.
