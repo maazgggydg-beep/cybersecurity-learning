@@ -1,0 +1,26 @@
+To solve this lab I visited the website and added **random letters in the search bar**. I noticed the input was **just shown in its URL** so I used the **debugger to analyze the code**.
+
+**Vulnerability Identification:**
+
+in debugger i see that line main issue there 
+
+```
+document.getElementById('searchMessage').innerHTML = query;
+```
+
+**Analysis:**
+
+This line is the **main issue** because **`.innerHTML` is used** therefore the b**rowser parses your payload as a real HTML element and adds it to the DOM**
+
+i use the payload:
+
+```
+<img src=1 onerror=alert(1)>
+```
+
+**Execution Flow:**
+
+1. As soon as that line of code runs the **browser sees a new image tag** on the page.
+2. It **tries to find an image at the source `1`** which **fails**.
+3. This **immediately triggers the `onerror` event** provided.
+4. The browser executes the JavaScript and **calls `alert()`**.
