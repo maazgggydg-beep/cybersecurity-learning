@@ -1,0 +1,54 @@
+Reflected XSS is basically a mirror trick You send a piece of code to a website 
+in a link. The website is lazy and just **reflects** that code right back 
+into the browser. The browser thinks the website wants that code to run 
+and it executes it.
+
+## How the Stealing Happens
+
+You find a search bar or a link that shows your text on the screen.You make a special link that has code to grab cookies.You trick someone like John into clicking that link.John's browser sends the code to the site. The site sends it back to John.The code runs in John's browser and sends his secret login cookie to attacker server.
+
+## The Attack Plan (Step by Step)
+
+**1. Find the Entry Point**
+
+An entry point is just any place you can put data. Check the search bars 
+and the stuff in the URL aftr the question mark. Also check hidden 
+things like headers and the stuff sent when you click a submit button.
+
+**2. Use a Tracker Word**
+
+Do not use code yet. Just use a random word like **findme99**.
+Type it in and see if it shows up on the page. If you see your word in 
+the page source then you know the site is reflecting your input.
+
+**3. Check the Context**
+
+Look at where your word landed.If it is just in the text you can use a simple script tag.If
+ it is inside a box or a link you have to "break out" first. You do this
+ by using a quote or a bracket to end their code before you start yours.
+
+**4. Test with Burp Repeater**
+
+Use a tool to send the request again and again. Keep your tracker word **findme99**
+ right next to your code. This makes it super easy to find your code in 
+the mess of the page source because you can just search for the tracker 
+word.
+
+**5. Try it in the Browser**
+
+If  the code looks good in your tool then paste the link into a real 
+browser. If a popup box appears or the cookie is sent then you found a 
+real bug.
+
+## Impact of reflected XSS attack
+
+If an attacker can control a script that is executed in the 
+victim's browser, then they can typically fully compromise that user. 
+Amongst other things, the attacker can:
+
+- Perform any action within the applcation that the user can perform.
+- View any information that the user is able to view.
+- Modify any information that the user is able to modify.
+- Initiate interactions with other application users,
+including malicious attacks, that will appear to originate from the
+initial victim user.
