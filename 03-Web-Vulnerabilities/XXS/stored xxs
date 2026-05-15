@@ -1,0 +1,49 @@
+Okay, Stored XSS is the most harmful type of XSS because it involves storing the harmful code in the database of the application. Unlike reflected XSS, where the victim needs to click on the link to execute the malicious code, there is no such thing when it comes to stored XSS. In stored XSS, all that the victim needs to do is to visit the webpage where the harmful code has been stored.
+
+**Why it’s Effective:**
+
+- **Zero Interaction:** The victim is just **pwned**  by browsing the site normally.
+- **High Impact:** It can target anyone from regular user to site admin.
+- **Stealth:** Since there is no weird URL the victim has no idea they are being attacked.
+
+**Example:**
+
+Imagine a blog where users can leave comments. An attacker submits a comment containing a payload like:
+
+```
+<script>alert('XSS')</script>
+```
+
+The  server saves this into the database. Now  every single person who reads
+ that blog post will have that script run in their browser. While an
+
+```
+alert()
+```
+
+is just a harmless POC  a real attacker would use this to steal session cookies 
+
+```
+document.cookie
+```
+
+ redirect users or hijack account.
+
+**Modern Reality & CTFs:**
+
+In the real world modern frameworks (like React or Angular) and Web 
+Application Fiewalls (WAFs) catch basic payloads. Finding Stored XSS 
+today usually requires bypassing filters or finding blind spots. While
+ basic
+
+```
+<script>
+```
+
+tags are common in CTFs real-world attacks often involve much more complex obfuscation.
+
+**The Role of Tools (Burp Suite):**
+
+Using a scanner like **Burp Suite Professional** is a massive time-saver. It automatically crawls entry points (search bars, URL parameters, headers) that are tedious to check manually. 
+However **never trust a scanner fully** Scanners can miss context-specific vulnerabilities or get blocked by  security layers. A good researcher uses the scanner to find "low-hanging
+ fruit" but performs manual testing to find the deep, logical bugs.
