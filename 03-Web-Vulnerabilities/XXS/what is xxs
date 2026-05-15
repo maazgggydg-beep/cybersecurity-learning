@@ -1,0 +1,31 @@
+Basically  XSS is when a hacker sneaks their own malicious JavaScript 
+into a website you trust Since your browser thinks the script belongs 
+to the site  it just runs it without questioning anything.
+
+## impact:
+
+- **Account Hijacking:** They grab your  **session cookies**  so they can log in as you.
+- **Redirects:** They can force your browser to jump to a fake login page or a phishing site.
+- **Data Theft:** They can watch what you type and steal your passwords or credit card info.
+- **Remote Control:** They can make your browser click buttons or post comments as if it were you.
+- 
+
+**How it happens (The Flow):**
+
+1. **The Opening:** The attacker finds a spot on a site that s leaky like a search bar or a comment section that doesn't check for code.
+2. **The Trap:** They drop their script in. The site either saves it (like in a comment) or bounces it back in a link they send to you.
+3. **The Trigger:** You visit the page. Your browser sees the hacker's code, thinks  **Oh this is part of the website**  and runs it immediately.
+4. **The Payoff:** Boom The script does its job, sends your data back to the attacker and user compromised without even knowing
+
+
+# how to detect xxs (basic way)
+
+ You can confirm most kinds of XSS vulnerability by injecting a payload that causes your own browser to execute some arbitrary JavaScript its commonly  to use ALERT  function for that because it easy simple short by there issue that   if you using chrome From version 92 onward (July 20th, 2021), cross-origin iframes are prevented from calling `alert()` so in that scenario you can use print() function  
+
+# types of XXS
+
+There are three main types of XSS  These are:
+
+- [Reflected XSS](https://portswigger.net/web-security/cross-site-scripting#reflected-cross-site-scripting), where the malicious script comes from the current HTTP request.
+- [Stored XSS](https://portswigger.net/web-security/cross-site-scripting#stored-cross-site-scripting), where the malicious script comes from the website's database.
+- [DOM-based XSS](https://portswigger.net/web-security/cross-site-scripting#dom-based-cross-site-scripting), where the vulnerability exists in client-side code rather than server-side code.
